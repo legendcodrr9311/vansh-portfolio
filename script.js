@@ -14,6 +14,14 @@ var sk=document.getElementById("sk"),skd=document.getElementById("skd");sk.inner
 sk.onclick=function(e){var b=e.target.closest("button");if(!b)return;sk.querySelectorAll(".chip").forEach(function(c){c.classList.toggle("on",c===b)});skd.textContent=SK[b.dataset.k]};
 var W=["a Tic Tac Toe game","an X (Twitter) clone","a currency converter","a Rock Paper Scissor game"],wi=0,ci=0,del=false,ty=document.getElementById("ty");
 (function tick(){var w=W[wi];ci+=del?-1:1;ty.textContent=w.slice(0,ci);var t=del?35:70;if(!del&&ci==w.length){del=true;t=1400}else if(del&&ci==0){del=false;wi=(wi+1)%W.length;t=300}setTimeout(tick,t)})();
+var C=[
+{t:"REST API (Intermediate)",d:"HackerRank · earned 29 Sep 2026",i:"assets/certs/restapi.jpg"},
+{t:"JavaScript (Intermediate)",d:"HackerRank · earned 28 Sep 2026",i:"assets/certs/javascript.jpg"},
+{t:"OCI Gen AI Professional",d:"Oracle Certified Professional · Sep 2025",i:"assets/certs/oracle_pro.jpg"},
+{t:"OCI AI Foundations Associate",d:"Oracle Certified Foundations Associate · Sep 2025",i:"assets/certs/oracle_found.jpg"},
+{t:"Data Science — Summer School",d:"Dronacharya College of Engineering · 2026",i:"assets/certs/internship.jpg"}];
+document.getElementById("cg").innerHTML=C.map(function(c){return '<article class="card cert"><img loading="lazy" src="'+c.i+'" alt="'+c.t+' certificate"><div><h4>'+c.t+'</h4><p>'+c.d+'</p></div></article>'}).join("");
+document.getElementById("cg").onclick=function(e){var im=e.target.closest("img");if(im){lb.querySelector("img").src=im.src;lb.classList.add("on")}};
 var links=[].slice.call(document.querySelectorAll("nav a")),secs=links.map(function(a){return document.querySelector(a.getAttribute("href"))});
 new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var i=secs.indexOf(x.target);links.forEach(function(l,k){l.classList.toggle("on",k==i)})}})},{rootMargin:"-45% 0px -50% 0px"}).observe&&secs.forEach(function(s){});
 var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var i=secs.indexOf(x.target);links.forEach(function(l,k){l.classList.toggle("on",k==i)})}})},{rootMargin:"-45% 0px -50% 0px"});secs.forEach(function(s){io.observe(s)});

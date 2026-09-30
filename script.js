@@ -1,366 +1,64 @@
-var EMAIL_TO = "vanshsaini9311@gmail.com";
-var GITHUB_URL = "https://github.com/vanshsaini9311/";
-
-
-/* ---------- Projects data ---------- */
-
-var projects = [
-  {
-    title: "X (Twitter) Clone",
-    description: "A clone of X's home feed: sidebar, composer, feed posts and a 'Today's News' panel.",
-    techStack: ["React", "Express", "Bootstrap"],
-    category: "fullstack",
-    image: "assets/twitter-clone.png",
-    videos: [
-      { label: "Website demo",    src: "assets/videos/twitter-website-demo.mp4" },
-      { label: "Responsive demo", src: "assets/videos/twitter-responsive-demo.mp4" }
-    ],
-    repoName: "X-Twitter-Clone-UI-UX-"
-  },
-  {
-    title: "Tic Tac Toe",
-    description: "Two-player 3×3 game with turn tracking, win detection and a reset button.",
-    techStack: ["HTML", "CSS", "JavaScript"],
-    category: "frontend",
-    image: "assets/tic-tac-toe.png",
-    videos: [
-      { label: "Working demo", src: "assets/videos/tic-tac-toe-demo.mp4" }
-    ],
-    repoName: "Tic-Tac-Toe-Mini-Project-HTML-CSS-JAVASCRIPT-"
-  },
-  {
-    title: "Currency Converter",
-    description: "Converts any amount between currencies using live exchange rates from a REST API.",
-    techStack: ["JavaScript", "REST API"],
-    category: "api",
-    image: "assets/currency-converter.png",
-    videos: [
-      { label: "Working demo", src: "assets/videos/currency-converter-demo.mp4" }
-    ],
-    repoName: "Currency-Converter"
-  },
-  {
-    title: "Rock Paper Scissor",
-    description: "Play against the computer with a live scoreboard and win/lose messages.",
-    techStack: ["HTML", "CSS", "JavaScript"],
-    category: "frontend",
-    image: "assets/rock-paper-scissor.png",
-    videos: [
-      { label: "Working demo", src: "assets/videos/rock-paper-scissor-demo.mp4" }
-    ],
-    repoName: "Rock-Paper-Scissor"
-  }
-];
-
-// [category value, button label]
-var filters = [
-  ["all", "All"],
-  ["frontend", "Front-end"],
-  ["fullstack", "Full-stack"],
-  ["api", "API"]
-];
-
-var filterBar = document.getElementById("filterBar");
-var projectList = document.getElementById("projectList");
-var lightbox = document.getElementById("lightbox");
-
-
-/* ---------- Filter buttons ---------- */
-
-filterBar.innerHTML = filters.map(function (filter, index) {
-  return '<button class="chip' + (index ? '' : ' on') + '" data-filter="' + filter[0] + '">' + filter[1] + '</button>';
-}).join("");
-
-
-/* ---------- Project cards ---------- */
-
-projectList.innerHTML = projects.map(function (project, index) {
-  return '<article class="card proj" data-category="' + project.category + '">' +
-    '<div>' +
-      '<span class="tag">project / 0' + (index + 1) + '</span>' +
-      '<h3>' + project.title + '</h3>' +
-      '<p>' + project.description + '</p>' +
-      '<div class="skills">' +
-        project.techStack.map(function (tech) {
-          return '<span class="chip">' + tech + '</span>';
-        }).join("") +
-      '</div>' +
-      '<div class="links">' +
-        '<a target="_blank" rel="noopener" href="' + GITHUB_URL + project.repoName + '">Source code ↗</a>' +
-      '</div>' +
-    '</div>' +
-    '<div class="media" data-project="' + index + '">' +
-      '<div class="tabs">' +
-        '<button class="chip on" data-media="-1">Screenshot</button>' +
-        (project.videos || []).map(function (video, videoIndex) {
-          return '<button class="chip" data-media="' + videoIndex + '">▶ ' + video.label + '</button>';
-        }).join("") +
-      '</div>' +
-      '<div class="shot">' +
-        '<img loading="lazy" src="' + project.image + '" alt="' + project.title + ' screenshot">' +
-      '</div>' +
-    '</div>' +
-  '</article>';
-}).join("");
-
-
-/* ---------- Filtering projects ---------- */
-
-filterBar.onclick = function (event) {
-  var clickedButton = event.target.closest("button");
-  if (!clickedButton) return;
-
-  // highlight the active filter
-  document.querySelectorAll("#filterBar .chip").forEach(function (chip) {
-    chip.classList.toggle("on", chip === clickedButton);
-  });
-
-  // show / hide project cards
-  document.querySelectorAll(".proj").forEach(function (card) {
-    var hideCard = clickedButton.dataset.filter != "all" && card.dataset.category != clickedButton.dataset.filter;
-    card.classList.toggle("hide", hideCard);
-  });
-
-  // stop any video that was playing
-  document.querySelectorAll("#projectList video").forEach(function (video) {
-    video.pause();
-  });
-};
-
-
-/* ---------- Lightbox + screenshot/video tabs ---------- */
-
-projectList.onclick = function (event) {
-  var clickedTab = event.target.closest(".tabs .chip");
-
-  if (clickedTab) {
-    var mediaBox = clickedTab.closest(".media");
-    var project = projects[mediaBox.dataset.project];
-    var mediaIndex = +clickedTab.dataset.media;   // -1 means screenshot
-    var shotBox = mediaBox.querySelector(".shot");
-
-    mediaBox.querySelectorAll(".tabs .chip").forEach(function (chip) {
-      chip.classList.toggle("on", chip === clickedTab);
-    });
-
-    document.querySelectorAll("#projectList video").forEach(function (video) {
-      video.pause();
-    });
-
-    shotBox.className = mediaIndex < 0 ? "shot" : "shot vid";
-    shotBox.innerHTML = mediaIndex < 0
-      ? '<img src="' + project.image + '" alt="' + project.title + ' screenshot">'
-      : '<video controls playsinline preload="metadata" src="' + project.videos[mediaIndex].src + '"></video>';
-
-    return;
-  }
-
-  // clicking a screenshot opens it in the lightbox
-  var clickedShot = event.target.closest(".shot:not(.vid)");
-  if (clickedShot) {
-    lightbox.querySelector("img").src = clickedShot.querySelector("img").src;
-    lightbox.classList.add("on");
-  }
-};
-
-lightbox.onclick = function () {
-  lightbox.classList.remove("on");
-};
-
-document.onkeydown = function (event) {
-  if (event.key == "Escape") lightbox.classList.remove("on");
-};
-
-
-/* ---------- Skills ---------- */
-
-var skillDescriptions = {
-  HTML: "Semantic markup for every project.",
-  CSS: "Layouts, responsive design and styling.",
-  JavaScript: "Game logic, DOM updates and API calls.",
-  React: "Component-based UI, used in the X clone.",
-  Express: "Backend server for the X clone.",
-  Bootstrap: "Fast, responsive layouts.",
-  "REST API": "Fetching live data, like exchange rates."
-};
-
-var skillList = document.getElementById("skillList");
-var skillInfo = document.getElementById("skillInfo");
-
-skillList.innerHTML = Object.keys(skillDescriptions).map(function (skill) {
-  return '<button class="chip" data-skill="' + skill + '">' + skill + '</button>';
-}).join("");
-
-skillList.onclick = function (event) {
-  var clickedButton = event.target.closest("button");
-  if (!clickedButton) return;
-
-  skillList.querySelectorAll(".chip").forEach(function (chip) {
-    chip.classList.toggle("on", chip === clickedButton);
-  });
-
-  skillInfo.textContent = skillDescriptions[clickedButton.dataset.skill];
-};
-
-
-/* ---------- Typing effect in the hero card ---------- */
-
-var typingWords = [
-  "a Tic Tac Toe game",
-  "an X (Twitter) clone",
-  "a currency converter",
-  "a Rock Paper Scissor game"
-];
-var wordIndex = 0;        // which word we're on
-var charIndex = 0;        // how many letters are showing
-var isDeleting = false;   // typing or deleting
-var typedText = document.getElementById("typedText");
-
-(function typeNextLetter() {
-  var currentWord = typingWords[wordIndex];
-  charIndex += isDeleting ? -1 : 1;
-  typedText.textContent = currentWord.slice(0, charIndex);
-
-  var delay = isDeleting ? 35 : 70;
-
-  if (!isDeleting && charIndex == currentWord.length) {
-    // finished typing, wait a bit before deleting
-    isDeleting = true;
-    delay = 1400;
-  } else if (isDeleting && charIndex == 0) {
-    // finished deleting, move to the next word
-    isDeleting = false;
-    wordIndex = (wordIndex + 1) % typingWords.length;
-    delay = 300;
-  }
-
-  setTimeout(typeNextLetter, delay);
-})();
-
-
-/* ---------- Certificates ---------- */
-
-var certificates = [
-  {
-    title: "REST API (Intermediate)",
-    details: "HackerRank · earned 29 Sep 2026",
-    image: "assets/certs/restapi.jpg"
-  },
-  {
-    title: "JavaScript (Intermediate)",
-    details: "HackerRank · earned 28 Sep 2026",
-    image: "assets/certs/javascript.jpg"
-  },
-  {
-    title: "OCI Gen AI Professional",
-    details: "Oracle Certified Professional · Sep 2025",
-    image: "assets/certs/oracle_pro.jpg"
-  },
-  {
-    title: "OCI AI Foundations Associate",
-    details: "Oracle Certified Foundations Associate · Sep 2025",
-    image: "assets/certs/oracle_found.jpg"
-  },
-  {
-    title: "Data Science — Summer School",
-    details: "Dronacharya College of Engineering · 2026",
-    image: "assets/certs/internship.jpg"
-  }
-];
-
-var certGrid = document.getElementById("certGrid");
-
-certGrid.innerHTML = certificates.map(function (cert) {
-  return '<article class="card cert">' +
-    '<img loading="lazy" src="' + cert.image + '" alt="' + cert.title + ' certificate">' +
-    '<div>' +
-      '<h4>' + cert.title + '</h4>' +
-      '<p>' + cert.details + '</p>' +
-    '</div>' +
-  '</article>';
-}).join("");
-
-certGrid.onclick = function (event) {
-  var clickedImage = event.target.closest("img");
-  if (clickedImage) {
-    lightbox.querySelector("img").src = clickedImage.src;
-    lightbox.classList.add("on");
-  }
-};
-
-
-/* ---------- Highlight the nav link of the section in view ---------- */
-
-var navLinks = [].slice.call(document.querySelectorAll("nav a"));
-var sections = navLinks.map(function (link) {
-  return document.querySelector(link.getAttribute("href"));
-});
-
-var observer = new IntersectionObserver(function (entries) {
-  entries.forEach(function (entry) {
-    if (entry.isIntersecting) {
-      var activeIndex = sections.indexOf(entry.target);
-      navLinks.forEach(function (link, index) {
-        link.classList.toggle("on", index == activeIndex);
-      });
-    }
-  });
-}, { rootMargin: "-45% 0px -50% 0px" });
-
-sections.forEach(function (section) {
-  observer.observe(section);
-});
-
-
-/* ---------- Toast message ---------- */
-
-var toastBox = document.getElementById("toast");
-
-function showToast(message) {
-  toastBox.textContent = message;
-  toastBox.classList.add("show");
-  setTimeout(function () {
-    toastBox.classList.remove("show");
-  }, 3500);
-}
-
-
-/* ---------- Contact form (opens the mail app) ---------- */
-
-document.getElementById("sendBtn").addEventListener("click", function (event) {
-  event.preventDefault();
-
-  var nameInput = document.getElementById("nameInput");
-  var emailInput = document.getElementById("emailInput");
-  var messageInput = document.getElementById("messageInput");
-  var formIsValid = true;
-
-  // check each field, mark the bad ones red
-  [
-    [nameInput, nameInput.value.trim()],
-    [emailInput, /^\S+@\S+\.\S+$/.test(emailInput.value.trim())],
-    [messageInput, messageInput.value.trim()]
-  ].forEach(function (field) {
-    var fieldIsValid = !!field[1];
-    field[0].classList.toggle("err", !fieldIsValid);
-    if (!fieldIsValid) formIsValid = false;
-  });
-
-  if (!formIsValid) {
-    showToast("Please fill in every field with a valid email.");
-    return;
-  }
-
-  var mailBody = "Name: " + nameInput.value + "\nEmail: " + emailInput.value + "\n\n" + messageInput.value;
-  var mailUrl = "mailto:" + EMAIL_TO +
-    "?subject=" + encodeURIComponent("Portfolio message from " + nameInput.value) +
-    "&body=" + encodeURIComponent(mailBody);
-
-  window.location.href = mailUrl;
-  showToast("Opening your email app…");
-});
-
-
-/* ---------- Footer year ---------- */
-
-document.getElementById("year").textContent = new Date().getFullYear();
+var TO="vanshsaini9311@gmail.com";
+var GH="https://github.com/vanshsaini9311/";
+var P=[
+{t:"X (Twitter) Clone",d:"A clone of X's home feed: sidebar, composer, feed posts and a 'Today's News' panel.",s:["React","Express","Bootstrap"],c:"fullstack",i:"assets/twitter-clone.png",v:[{l:"Website demo",s:"assets/videos/twitter-website-demo.mp4"},{l:"Responsive demo",s:"assets/videos/twitter-responsive-demo.mp4"}],g:"X-Twitter-Clone-UI-UX-"},
+{t:"Tic Tac Toe",d:"Two-player 3×3 game with turn tracking, win detection and a reset button.",s:["HTML","CSS","JavaScript"],c:"frontend",i:"assets/tic-tac-toe.png",v:[{l:"Working demo",s:"assets/videos/tic-tac-toe-demo.mp4"}],g:"Tic-Tac-Toe-Mini-Project-HTML-CSS-JAVASCRIPT-"},
+{t:"Currency Converter",d:"Converts any amount between currencies using live exchange rates from a REST API.",s:["JavaScript","REST API"],c:"api",i:"assets/currency-converter.png",v:[{l:"Working demo",s:"assets/videos/currency-converter-demo.mp4"}],g:"Currency-Converter"},
+{t:"Rock Paper Scissor",d:"Play against the computer with a live scoreboard and win/lose messages.",s:["HTML","CSS","JavaScript"],c:"frontend",i:"assets/rock-paper-scissor.png",v:[{l:"Working demo",s:"assets/videos/rock-paper-scissor-demo.mp4"}],g:"Rock-Paper-Scissor"}];
+var F=[["all","All"],["frontend","Front-end"],["fullstack","Full-stack"],["api","API"]];
+
+document.getElementById("fl").innerHTML=F.map(function(f,k){return '<button class="chip'+(k?'':' on')+'" data-f="'+f[0]+'">'+f[1]+'</button>'}).join("");
+
+document.getElementById("pl").innerHTML=P.map(function(p,k){return '<article class="card proj" data-c="'+p.c+'"><div><span class="tag">project / 0'+(k+1)+'</span><h3>'+p.t+'</h3><p>'+p.d+'</p><div class="skills">'+p.s.map(function(x){return '<span class="chip">'+x+'</span>'}).join("")+'</div><div class="links"><a target="_blank" rel="noopener" href="'+GH+p.g+'">Source code ↗</a></div></div><div class="media" data-p="'+k+'"><div class="tabs"><button class="chip on" data-m="-1">Screenshot</button>'+(p.v||[]).map(function(v,j){return '<button class="chip" data-m="'+j+'">▶ '+v.l+'</button>'}).join("")+'</div><div class="shot"><img loading="lazy" src="'+p.i+'" alt="'+p.t+' screenshot"></div></div></article>'}).join("");
+
+document.getElementById("fl").onclick=function(e){var b=e.target.closest("button");if(!b)return;document.querySelectorAll("#fl .chip").forEach(function(c){c.classList.toggle("on",c===b)});document.querySelectorAll(".proj").forEach(function(a){a.classList.toggle("hide",b.dataset.f!="all"&&a.dataset.c!=b.dataset.f)});document.querySelectorAll("#pl video").forEach(function(v){v.pause()})};
+
+var lb=document.getElementById("lb");
+document.getElementById("pl").onclick=function(e){
+var tab=e.target.closest(".tabs .chip");
+if(tab){var md=tab.closest(".media"),p=P[md.dataset.p],m=+tab.dataset.m;
+md.querySelectorAll(".tabs .chip").forEach(function(c){c.classList.toggle("on",c===tab)});
+document.querySelectorAll("#pl video").forEach(function(v){v.pause()});
+md.querySelector(".shot").className=m<0?"shot":"shot vid";
+md.querySelector(".shot").innerHTML=m<0?'<img src="'+p.i+'" alt="'+p.t+' screenshot">':'<video controls playsinline preload="metadata" src="'+p.v[m].s+'"></video>';
+return}
+var s=e.target.closest(".shot:not(.vid)");
+if(s){lb.querySelector("img").src=s.querySelector("img").src;lb.classList.add("on")}};
+lb.onclick=function(){lb.classList.remove("on")};
+document.onkeydown=function(e){if(e.key=="Escape")lb.classList.remove("on")};
+
+var SK={HTML:"Semantic markup for every project.",CSS:"Layouts, responsive design and styling.",JavaScript:"Game logic, DOM updates and API calls.",React:"Component-based UI, used in the X clone.",Express:"Backend server for the X clone.",Bootstrap:"Fast, responsive layouts.","REST API":"Fetching live data, like exchange rates."};
+var sk=document.getElementById("sk"),skd=document.getElementById("skd");
+sk.innerHTML=Object.keys(SK).map(function(k){return '<button class="chip" data-k="'+k+'">'+k+'</button>'}).join("");
+sk.onclick=function(e){var b=e.target.closest("button");if(!b)return;sk.querySelectorAll(".chip").forEach(function(c){c.classList.toggle("on",c===b)});skd.textContent=SK[b.dataset.k]};
+
+var W=["a Tic Tac Toe game","an X (Twitter) clone","a currency converter","a Rock Paper Scissor game"],wi=0,ci=0,del=false,ty=document.getElementById("ty");
+(function tick(){var w=W[wi];ci+=del?-1:1;ty.textContent=w.slice(0,ci);var t=del?35:70;if(!del&&ci==w.length){del=true;t=1400}else if(del&&ci==0){del=false;wi=(wi+1)%W.length;t=300}setTimeout(tick,t)})();
+
+var C=[
+{t:"REST API (Intermediate)",d:"HackerRank · earned 29 Sep 2026",i:"assets/certs/restapi.jpg"},
+{t:"JavaScript (Intermediate)",d:"HackerRank · earned 28 Sep 2026",i:"assets/certs/javascript.jpg"},
+{t:"OCI Gen AI Professional",d:"Oracle Certified Professional · Sep 2025",i:"assets/certs/oracle_pro.jpg"},
+{t:"OCI AI Foundations Associate",d:"Oracle Certified Foundations Associate · Sep 2025",i:"assets/certs/oracle_found.jpg"},
+{t:"Data Science — Summer School",d:"Dronacharya College of Engineering · 2026",i:"assets/certs/internship.jpg"}];
+document.getElementById("cg").innerHTML=C.map(function(c){return '<article class="card cert"><img loading="lazy" src="'+c.i+'" alt="'+c.t+' certificate"><div><h4>'+c.t+'</h4><p>'+c.d+'</p></div></article>'}).join("");
+document.getElementById("cg").onclick=function(e){var im=e.target.closest("img");if(im){lb.querySelector("img").src=im.src;lb.classList.add("on")}};
+
+var links=[].slice.call(document.querySelectorAll("nav a")),secs=links.map(function(a){return document.querySelector(a.getAttribute("href"))});
+var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var i=secs.indexOf(x.target);links.forEach(function(l,k){l.classList.toggle("on",k==i)})}})},{rootMargin:"-45% 0px -50% 0px"});
+secs.forEach(function(s){io.observe(s)});
+
+var toastEl=document.getElementById("toast");
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");setTimeout(function(){toastEl.classList.remove("show")},3500)}
+
+document.getElementById("sendBtn").addEventListener("click",function(e){
+e.preventDefault();
+var n=document.getElementById("n"),em=document.getElementById("e"),m=document.getElementById("m"),ok=true;
+[[n,n.value.trim()],[em,/^\S+@\S+\.\S+$/.test(em.value.trim())],[m,m.value.trim()]].forEach(function(p){var v=!!p[1];p[0].classList.toggle("err",!v);if(!v)ok=false});
+if(!ok){toast("Please fill in every field with a valid email.");return}
+var body="Name: "+n.value+"\nEmail: "+em.value+"\n\n"+m.value;
+var mailUrl="mailto:"+TO+"?subject="+encodeURIComponent("Portfolio message from "+n.value)+"&body="+encodeURIComponent(body);
+window.location.href=mailUrl;
+toast("Opening your email app…")});
+
+document.getElementById("yr").textContent=new Date().getFullYear();

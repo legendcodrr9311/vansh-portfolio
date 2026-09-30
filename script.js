@@ -26,12 +26,11 @@ var links=[].slice.call(document.querySelectorAll("nav a")),secs=links.map(funct
 new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var i=secs.indexOf(x.target);links.forEach(function(l,k){l.classList.toggle("on",k==i)})}})},{rootMargin:"-45% 0px -50% 0px"}).observe&&secs.forEach(function(s){});
 var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var i=secs.indexOf(x.target);links.forEach(function(l,k){l.classList.toggle("on",k==i)})}})},{rootMargin:"-45% 0px -50% 0px"});secs.forEach(function(s){io.observe(s)});
 var tb=document.getElementById("toast");function toast(m){tb.textContent=m;tb.classList.add("show");setTimeout(function(){tb.classList.remove("show")},3500)}
-document.getElementById("sendBtn").addEventListener("click",function(e){e.preventDefault();var btn=this,n=document.getElementById("n"),em=document.getElementById("e"),m=document.getElementById("m"),ok=true;
+document.getElementById("sendBtn").addEventListener("click",function(e){e.preventDefault();var n=document.getElementById("n"),em=document.getElementById("e"),m=document.getElementById("m"),ok=true;
 [[n,n.value.trim()],[em,/^\S+@\S+\.\S+$/.test(em.value)],[m,m.value.trim()]].forEach(function(p){var v=!!p[1];p[0].classList.toggle("err",!v);if(!v)ok=false});
 if(!ok){toast("Please fill in every field with a valid email.");return}
-var fd=new FormData();fd.append("name",n.value);fd.append("email",em.value);fd.append("message",m.value);fd.append("_subject","Portfolio message from "+n.value);fd.append("_captcha","false");fd.append("_template","table");
-var prevText=btn.textContent;btn.textContent="Sending…";
-fetch("https://formsubmit.co/ajax/"+TO,{method:"POST",headers:{Accept:"application/json"},body:fd}).then(function(r){return r.json()}).then(function(){
-toast("Message sent — thanks!");n.value="";em.value="";m.value="";btn.textContent=prevText
-}).catch(function(){toast("Couldn't send — try again, or email me directly.");btn.textContent=prevText})});
+var body="Name: "+n.value+"\nEmail: "+em.value+"\n\n"+m.value;
+var mailUrl="mailto:"+TO+"?subject="+encodeURIComponent("Portfolio message from "+n.value)+"&body="+encodeURIComponent(body);
+window.location.href=mailUrl;
+toast("Opening your email app…")});
 document.getElementById("yr").textContent=new Date().getFullYear();

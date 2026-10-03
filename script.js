@@ -53,12 +53,13 @@ function toast(m){toastEl.textContent=m;toastEl.classList.add("show");setTimeout
 
 document.getElementById("sendBtn").addEventListener("click",function(e){
 e.preventDefault();
-var n=document.getElementById("n"),em=document.getElementById("e"),m=document.getElementById("m"),ok=true;
+var n=document.getElementById("n"),em=document.getElementById("e"),m=document.getElementById("m"), form = document.getElementById("f");ok=true;
 [[n,n.value.trim()],[em,/^\S+@\S+\.\S+$/.test(em.value.trim())],[m,m.value.trim()]].forEach(function(p){var v=!!p[1];p[0].classList.toggle("err",!v);if(!v)ok=false});
 if(!ok){toast("Please fill in every field with a valid email.");return}
 var body="Name: "+n.value+"\nEmail: "+em.value+"\n\n"+m.value;
 var mailUrl="mailto:"+TO+"?subject="+encodeURIComponent("Portfolio message from "+n.value)+"&body="+encodeURIComponent(body);
 window.location.href=mailUrl;
+form.reset();
 toast("Opening your email app…")});
 
 document.getElementById("yr").textContent=new Date().getFullYear();
